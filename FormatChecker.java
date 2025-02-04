@@ -116,6 +116,11 @@ public class FormatChecker{
                     System.out.println("INVALID");
                 } catch (FileNotFoundException e){
                     System.err.println(e);
+                } finally {
+                    dimensionScan.close();
+                    lineScan.close();
+                    fileScan.close();
+                    //make this work ^^^
                 }
             }
 
