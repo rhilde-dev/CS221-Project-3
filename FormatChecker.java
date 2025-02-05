@@ -24,15 +24,18 @@ public class FormatChecker{
                 int col; //column condition
                 double[][] checkArray; //array condition
                 int count = 0;
-    
+                Scanner fileScan = null;
+                Scanner dimensionScan = null;
+                Scanner lineScan = null;
+
                 //prints out name of file being checked
                 System.out.println(arg);
     
                 try{
                     //scans file and tokenizes data into array
                     File file = new File(arg);
-                    Scanner fileScan = new Scanner(file);
-                    Scanner dimensionScan = new Scanner(fileScan.nextLine());
+                    fileScan = new Scanner(file);
+                    dimensionScan = new Scanner(fileScan.nextLine());
                     dimensionScan.useDelimiter(" ");
                     
                     if(dimensionScan.hasNextInt()){
@@ -58,7 +61,7 @@ public class FormatChecker{
                         //TODO: use while loop to count through row and add conditional if it is over or under amount specified
                         
     
-                        Scanner lineScan = new Scanner(fileScan.nextLine());
+                        lineScan = new Scanner(fileScan.nextLine());
                         lineScan.useDelimiter(" ");
     
                         for (int i = 0; i < checkArray[count].length; i++){
@@ -120,7 +123,6 @@ public class FormatChecker{
                     dimensionScan.close();
                     lineScan.close();
                     fileScan.close();
-                    //make this work ^^^
                 }
             }
 
