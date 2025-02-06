@@ -36,60 +36,75 @@ public class FormatChecker{
                     File file = new File(arg);
                     fileScan = new Scanner(file);
                     dimensionScan = new Scanner(fileScan.nextLine());
-                    dimensionScan.useDelimiter(" ");
+                    // dimensionScan.useDelimiter(" ");
                     
                     if(dimensionScan.hasNextInt()){
-                        row = dimensionScan.nextInt();
+                        row = dimensionScan.nextInt();  
+                        // System.out.println(row);
                     } else {
                         throw new InputMismatchException("Invalid Dimension Type: Expected Integer for Row Variable");
                     }
+
+                    // dimensionScan.skip(" ");
+
+                    while(!dimensionScan.hasNextInt()){
+                        dimensionScan.next();
+                    }
+
                     if(dimensionScan.hasNextInt()){
                         col = dimensionScan.nextInt();
+                        // System.out.println(col);
                     } else {
                         throw new InputMismatchException("Invalid Dimension Type: Expected Integer for Column Variable");
                     }
                     if(dimensionScan.hasNextInt()){
                         throw new InvalidFileFormatException("Invalid File Format: Unexpected Dimension for input: " + dimensionScan.nextInt());
                     }
+                    
                     dimensionScan.close();
-    
+
                     //instantiate double array
                     checkArray = new double[row][col];
     
                     //add values in file to the checkArray
                     while(fileScan.hasNextLine()){
-                        //TODO: use while loop to count through row and add conditional if it is over or under amount specified
                         
-    
+                        
+
                         lineScan = new Scanner(fileScan.nextLine());
-                        lineScan.useDelimiter(" ");
+                        // lineScan.useDelimiter(" ");
     
+
                         for (int i = 0; i < checkArray[count].length; i++){
                             //add each number to the row
-                            if (lineScan.hasNextInt()){
-                                checkArray[count][i] = Double.parseDouble(lineScan.next());
+                            if (lineScan.hasNextDouble()){
+                                checkArray[count][i] = lineScan.nextDouble();
+                                if(lineScan.hasNextDouble() && i == checkArray[count].length - 1){
+                                    throw new InvalidFileFormatException("Invalid File Format: Exceeded max columns (Max Columns:" + col + ") specified");
+                                }
                             } else {
                                 //exception handled for less than specified cols
                                 throw new InvalidFileFormatException("Invalid File Format: Subceeded max columns (Max Columns:" + col + ") specified");
                             }
                             
                         }
+                        // System.out.println(count);
                         lineScan.close();
                         
                         if(!(count >= row)){
                             count++;
-                            System.out.println(count);
+                            // System.out.println(count);
                         } else {
                             //exception handled for more than specified rows
                             throw new InvalidFileFormatException("Invalid File Format: Exceeded max rows (Max Rows:" + row + ") specified");
                         }
 
-                        // if(){
-                        //     throw new InvalidFileFormatException("Invalid File Format: Subceeded max rows (Max Rows:" + row + ") specified");
-                        // }
+                        if((count == row) && fileScan.hasNextLine() && !(fileScan.nextLine() == "")){
+                            // System.out.println(fileScan.nextLine());
+                            //figure this out TODO
+                            throw new InvalidFileFormatException("Invalid File Format: Subceeded max rows (Max Rows:" + row + ") specified");
+                        }
 
-                        //TODO make exception for exceeded max rows
-                        //Make exception for
                     }
     
                     //print out array for testing
@@ -120,9 +135,15 @@ public class FormatChecker{
                 } catch (FileNotFoundException e){
                     System.err.println(e);
                 } finally {
-                    dimensionScan.close();
-                    lineScan.close();
-                    fileScan.close();
+                    if (!(dimensionScan == null)){
+                        dimensionScan.close();
+                    }
+                    if (!(lineScan == null)){
+                        lineScan.close();
+                    }
+                    if (!(fileScan == null)){
+                        fileScan.close();
+                    }
                 }
             }
 
