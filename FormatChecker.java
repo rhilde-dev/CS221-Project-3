@@ -46,14 +46,14 @@ public class FormatChecker{
                     }
 
                     // dimensionScan.skip(" ");
+                    // System.out.println("here");
 
-                    while(!dimensionScan.hasNextInt()){
+                    while(!dimensionScan.hasNextInt() && dimensionScan.next() == " "){
                         dimensionScan.next();
                     }
-
+                    
                     if(dimensionScan.hasNextInt()){
                         col = dimensionScan.nextInt();
-                        // System.out.println(col);
                     } else {
                         throw new InputMismatchException("Invalid Dimension Type: Expected Integer for Column Variable");
                     }
