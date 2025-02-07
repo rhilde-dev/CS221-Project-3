@@ -3,30 +3,29 @@ import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-
 /**
  * This class will check the format of the files by scanning them
- * and printing to the console whether or not they are valid
- * file formats
+ * and printing to the console whether or not they are valid (VALID/INVALID)
+ * file formats. If the file is invalid, a concise message will be
+ * displayed as to what made the file invalid.
  * 
+ * @param args - files wanting to be checked
  * @author rhilde-dev
  */
 public class FormatChecker{
     public static void main(String[] args) {
         
-        //either print valid or invalid
-        //check for file data in the wrong format
         if(!(args.length == 0)){
             for (String arg : args){
     
                 //instance variables
-                int row; //row condition
-                int col; //column condition
-                double[][] checkArray; //array condition
-                int count = 0;
-                Scanner fileScan = null;
-                Scanner dimensionScan = null;
-                Scanner lineScan = null;
+                int row; //row value
+                int col; //column value
+                double[][] checkArray; //array value
+                int count = 0; //iteration value
+                Scanner fileScan = null; //file scanner
+                Scanner dimensionScan = null; //dimension value scanner
+                Scanner lineScan = null; //array scanner
 
                 //prints out name of file being checked
                 System.out.println(arg);
@@ -36,27 +35,27 @@ public class FormatChecker{
                     File file = new File(arg);
                     fileScan = new Scanner(file);
                     dimensionScan = new Scanner(fileScan.nextLine());
-                    // dimensionScan.useDelimiter(" ");
                     
+                    //scanning row value
                     if(dimensionScan.hasNextInt()){
                         row = dimensionScan.nextInt();  
-                        // System.out.println(row);
                     } else {
                         throw new InputMismatchException("Invalid Dimension Type: Expected Integer for Row Variable");
                     }
 
-                    // dimensionScan.skip(" ");
-                    // System.out.println("here");
-
+                    //skips over whitespace
                     while(!dimensionScan.hasNextInt() && dimensionScan.next() == " "){
                         dimensionScan.next();
                     }
                     
+                    //scanning col value
                     if(dimensionScan.hasNextInt()){
                         col = dimensionScan.nextInt();
                     } else {
                         throw new InputMismatchException("Invalid Dimension Type: Expected Integer for Column Variable");
                     }
+
+                    //if extra unexpected variable is present, throw exception
                     if(dimensionScan.hasNextInt()){
                         throw new InvalidFileFormatException("Invalid File Format: Unexpected Dimension for input: " + dimensionScan.nextInt());
                     }
@@ -69,17 +68,14 @@ public class FormatChecker{
                     //add values in file to the checkArray
                     while(fileScan.hasNextLine()){
                         
-                        
-
                         lineScan = new Scanner(fileScan.nextLine());
-                        // lineScan.useDelimiter(" ");
     
-
+                        //add each double value to the array
                         for (int i = 0; i < checkArray[count].length; i++){
-                            //add each number to the row
                             if (lineScan.hasNextDouble()){
                                 checkArray[count][i] = lineScan.nextDouble();
                                 if(lineScan.hasNextDouble() && i == checkArray[count].length - 1){
+                                    //exception handled for more than specified cols
                                     throw new InvalidFileFormatException("Invalid File Format: Exceeded max columns (Max Columns:" + col + ") specified");
                                 }
                             } else {
@@ -88,53 +84,50 @@ public class FormatChecker{
                             }
                             
                         }
-                        // System.out.println(count);
+                        
                         lineScan.close();
                         
+                        //exception checks for each row after adding it to array
                         if(!(count >= row)){
                             count++;
-                            // System.out.println(count);
                         } else {
                             //exception handled for more than specified rows
                             throw new InvalidFileFormatException("Invalid File Format: Exceeded max rows (Max Rows:" + row + ") specified");
                         }
 
                         if((count == row) && fileScan.hasNextLine() && !(fileScan.nextLine() == "")){
-                            // System.out.println(fileScan.nextLine());
-                            //figure this out TODO
+                            //exception handled for less than specified rows
                             throw new InvalidFileFormatException("Invalid File Format: Subceeded max rows (Max Rows:" + row + ") specified");
                         }
 
                     }
     
-                    //print out array for testing
-                    // for(int i = 0; i < checkArray.length; i++){
-                    //     for(int j = 0; j < checkArray[i].length; j++){
-                    //         System.out.println(checkArray[i][j]);
-                    //     }
-                    // }
-    
-                    //===================================
-    
-    
                     fileScan.close();
+
+                    //after all conditions passed VALID is printed
                     System.out.println("VALID");
                     
                 } catch (InvalidFileFormatException e) {
+                    //custom exception
                     System.err.println(e.getMessage());
                     System.out.println("INVALID");
                 } catch (InputMismatchException e) {
+                    //input mismatch excpetion for row/col values
                     System.err.println(e.getMessage());
                     System.out.println("INVALID");
                 } catch (NoSuchElementException e) {
-                    System.err.println("NoSuchElementExists");
+                    //exception if no element exists
+                    System.err.println("Invalid File Format: Values missing");
                     System.out.println("INVALID");
                 } catch (NumberFormatException e){
-                    System.err.println("java.lang.NumberFormatException: " + e.getMessage());
+                    //exception for non integer values
+                    System.err.println("Invalid File Format: " + e.getMessage());
                     System.out.println("INVALID");
                 } catch (FileNotFoundException e){
+                    //exception if file argued is not found
                     System.err.println(e);
                 } finally {
+                    //closing all scanners when exception thrown
                     if (!(dimensionScan == null)){
                         dimensionScan.close();
                     }
@@ -146,11 +139,9 @@ public class FormatChecker{
                     }
                 }
             }
-
         } else {
+            //if no arguments presented, correct usage statement is provided
             System.out.println("Usage: $ java FormatChecker file1 [file2 ... fileN]");
         }
-
     }
-
 }
